@@ -1,0 +1,49 @@
+# This Python 3 environment comes with many helpful analytics libraries installed
+# It is defined by the kaggle/python docker image: https://github.com/kaggle/docker-python
+# For example, here's several helpful packages to load in 
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+# Input data files are available in the "../input/" directory.
+# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+# Any results you write to the current directory are saved as output.
+data = pd.read_csv("../input/spam-email/spam_email.csv")
+data.head()
+X = data[['address','all','our','over','order','will','free','george','semicol','paren','bracket']]
+
+X.head()
+y = data['Class']
+y.head()
+from sklearn.preprocessing import LabelEncoder
+
+le=LabelEncoder()
+
+y=le.fit_transform(y)
+# Import train_test_split function
+from sklearn.model_selection import train_test_split
+
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+# Nhập bộ phân loại adaboost
+from sklearn.ensemble import AdaBoostClassifier
+
+# Tạo đối tượng phân loại adaboost
+abc = AdaBoostClassifier(n_estimators=50, learning_rate=1, random_state=0)
+
+# Huấn luyện Adaboost Classifer
+model1 = abc.fit(X_train, y_train)
+
+#Dự đoán phản ứng cho tập dữ liệu thử nghiệm
+y_pred = model1.predict(X_test)
+#iNhập mô-đun số liệu tìm hiểu scikit-learn để tính toán chính xác
+from sklearn.metrics import accuracy_score
+
+#tính toán và in chính xác mô hình
+print("AdaBoost Classifier Model Accuracy:", accuracy_score(y_test, y_pred))
